@@ -1,6 +1,13 @@
 let particles = [];
 let numOfParticles = 100;
 let displayText = false;
+let trackButton = document.getElementById("trackbutton");
+let canvas;
+let context;
+canvas = document.getElementById("videoCanvas");
+context = canvas.getContext("2d");
+let model;
+let myHand;
 
 // Initializing particle class
 class Particle {
@@ -52,22 +59,20 @@ class Particle {
     stroke(c);
     strokeWeight(1);
     line(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-
-
   }
 
 
 }
 
-
 function setup() {
+  startVideo();
   createCanvas(windowWidth, windowHeight);
   myParticle = new Particle();
   console.log(myParticle.velocity);
   for (let i = 0; i < numOfParticles; i++){
     particles.push(new Particle(i));
   }
-
+  myHand = new handParticle();
 }
 
 function draw() {
@@ -77,4 +82,79 @@ function draw() {
     particles[i].move();
     particles[i].draw();
   }
+  myHand.draw();
+}
+
+class handParticle {
+  constructor() {
+    this.location = createVector(windowWidth/2, windowHeight/2);
+    this.lerpStep = 0.06;
+    this.lerpCounter;
+    this.locationGoal;
+  }
+
+  updateLocation(vector){
+    this.lerpCounter = 0;
+    let goalX = map(vector.x, 0, video.videoWidth, 0, windowWidth, true);
+    
+    let goalY = map(vector.y, 0, video.videoHeight, 0, windowHeight, true);
+    this.locationGoal = createVector(goalX,goalY);
+  }
+
+  draw(){
+    this.lerpCounter += this.lerpStep;
+    this.location = p5.Vector.lerp(this.location, this.locationGoal, this.lerpCounter);
+    fill(255);
+    ellipse(this.location.x, this.location.y, 100, 100)
+  }
+}
+
+//######################################HAND TRACK JS
+
+const modelParams = {
+  flipHorizontal: true, // flip e.g for video  
+  maxNumBoxes: 1, // maximum number of boxes to detect
+  iouThreshold: 0.5, // ioU threshold for non-max suppression
+  scoreThreshold: 0.6, // confidence threshold for predictions.
+}
+
+const video = document.getElementById('myvideo');  
+trackButton.addEventListener("click", function () {
+  startVideo();
+});
+
+//start video
+
+function startVideo() {
+  handTrack.startVideo(video).then(function (status) {
+      console.log("video started", status);
+      if (status) {
+          //isVideo = true
+          runDetection()
+      } else {
+         console.log( "Please enable video")
+      }
+  });
+}
+
+
+handTrack.load(modelParams).then(thisModel => { 
+ model = thisModel;
+ //setInterval(runDetection, 500);
+ runDetection();
+});
+
+function runDetection() {
+  model.detect(video).then(predictions => {
+    //model.renderPredictions(predictions, canvas, context, video);
+
+    if (predictions[0]){
+      let handX = predictions[0].bbox[0] + (predictions[0].bbox[2] / 2);
+      let handY = predictions[0].bbox[1] + (predictions[0].bbox[3] / 2);
+      let newHandLocation = createVector(handX, handY);
+      myHand.updateLocation(newHandLocation);
+     
+    }
+    runDetection();
+  });
 }
