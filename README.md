@@ -13,7 +13,7 @@ Inspired by chapter 4 of the book ["Nature of Code"](https://natureofcode.com/) 
 
 ## Future ideas
 
-The current state of this application is for sure not optimal. There are certain ideas I have to improve the application:
+The current state of this application is for sure not optimal. There are certain ideas I have to improve it:
 
 [ ] Implementing an interaction between the drawn hand ellipse and the particles
 
