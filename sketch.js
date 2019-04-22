@@ -104,7 +104,8 @@ class handParticle {
   draw(){
     this.lerpCounter += this.lerpStep;
     this.location = p5.Vector.lerp(this.location, this.locationGoal, this.lerpCounter);
-    fill(255);
+    let c = color('rgba(0, 255, 255,' + 0.4 +  ')')
+    fill(c);
     ellipse(this.location.x, this.location.y, 100, 100)
   }
 }
@@ -119,12 +120,8 @@ const modelParams = {
 }
 
 const video = document.getElementById('myvideo');  
-trackButton.addEventListener("click", function () {
-  startVideo();
-});
 
 //start video
-
 function startVideo() {
   handTrack.startVideo(video).then(function (status) {
       console.log("video started", status);
@@ -146,7 +143,7 @@ handTrack.load(modelParams).then(thisModel => {
 
 function runDetection() {
   model.detect(video).then(predictions => {
-    //model.renderPredictions(predictions, canvas, context, video);
+    model.renderPredictions(predictions, canvas, context, video);
 
     if (predictions[0]){
       let handX = predictions[0].bbox[0] + (predictions[0].bbox[2] / 2);

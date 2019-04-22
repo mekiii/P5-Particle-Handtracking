@@ -13,3 +13,8 @@ button {
     bottom: 5px;
     right: 5px;
 }
+
+html,body {
+    overflow-y:hidden;
+    height:100%;
+}
