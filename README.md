@@ -1,8 +1,6 @@
 # Particle Animation meets Hand Interaction
 
-As a generative arts sketch I created a particle animation in combination with a hand 
-
-detection via [handtracking.js](https://hackernoon.com/handtrackjs-677c29c1d585) and [P5](https://p5js.org/). 
+As a generative arts sketch I created a particle animation in combination with a hand detection via [handtracking.js](https://hackernoon.com/handtrackjs-677c29c1d585) and [P5](https://p5js.org/). P5 itself is based on the concept of making code accessible for artists, designers and educators. It is fortunately free or donation based and can be accessed [here](https://p5js.org/).
 
 A live demo can be seen here 
 (please wait a few seconds, until the handtracking model is fully loaded): 
