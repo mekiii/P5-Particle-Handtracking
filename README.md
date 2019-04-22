@@ -15,7 +15,7 @@ Inspired by chapter 4 of the book ["Nature of Code"](https://natureofcode.com/) 
 
 The current state of this application is for sure not optimal. There are certain ideas I have to improve it:
 
-[ ] Implementing an interaction between the drawn hand ellipse and the particles
+[X] Implementing an interaction between the drawn hand ellipse and the particles
 
 [ ] Improving the performance
 
