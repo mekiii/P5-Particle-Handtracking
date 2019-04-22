@@ -1,5 +1,5 @@
 let particles = [];
-let numOfParticles = 100;
+let numOfParticles = 80;
 let displayText = false;
 let trackButton = document.getElementById("trackbutton");
 let canvas;
@@ -20,10 +20,21 @@ class Particle {
   }
 
   move() {
-    this.location.x += this.velocity.x;
-    this.location.x = (windowWidth + this.location.x) % windowWidth ;
-    this.location.y += this.velocity.y;
-    this.location.y = (windowHeight + this.location.y) % windowHeight;
+    if (this.location.dist(myHand.location) < 100){
+      let differenceX = this.location.x - myHand.location.x;
+      let differenceY = this.location.y - myHand.location.y;
+      this.location.x +=  differenceX*0.3;
+      this.location.x = (windowWidth + this.location.x) % windowWidth ;
+      this.location.y += differenceY*0.3;
+      this.location.y = (windowHeight + this.location.y) % windowHeight;
+    }
+    else {
+      this.location.x += this.velocity.x;
+      this.location.x = (windowWidth + this.location.x) % windowWidth ;
+      this.location.y += this.velocity.y;
+      this.location.y = (windowHeight + this.location.y) % windowHeight;
+    }
+    
   }
 
   draw(){
@@ -52,6 +63,7 @@ class Particle {
     }
   }
 
+
   drawLine(startPoint, endPoint){
     let dist = startPoint.dist(endPoint);
     let alpha = map(dist, 0, this.maxDistance, 1.0, 0.0);
@@ -79,6 +91,7 @@ function draw() {
   background(20);
   for (let i = 0; i < numOfParticles; i++){
     particles[i].detectNeighbour();
+    //particles[i].detectHand();
     particles[i].move();
     particles[i].draw();
   }
