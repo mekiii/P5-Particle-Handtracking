@@ -15,9 +15,13 @@ Inspired by chapter 4 of the book ["Nature of Code"](https://natureofcode.com/) 
 
 There are certain ideas I have to improve the application:
 
-[ ] Implementing an interaction between the drawn hand ellipce and the particles
+[ ] Implementing an interaction between the drawn hand ellipse and the particles
 
 [ ] Improving the performance
+
+[ ] Interaction with multipe hands
+
+[ ] Alternative of full body interaction
 
 [ ] Implementing a mouse-over alternative
 
