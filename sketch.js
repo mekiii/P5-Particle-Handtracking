@@ -2,61 +2,73 @@ let particles = [];
 let numOfParticles = 80;
 let displayText = false;
 let trackButton = document.getElementById("trackbutton");
+trackButton.innerHTML = "Loading..."
 let canvas;
 let context;
 canvas = document.getElementById("videoCanvas");
+//let p5Canvas = document.getElementsByClassName("p5Canvas")[0];
+//p5Canvas.style.opacity = "0.5";
+let isLoaded = false;
 context = canvas.getContext("2d");
 let model;
 let myHand;
+let videoStarted = false;
+
+
+trackButton.addEventListener('click', function () {
+  videoStarted = true;
+  startVideo();
+})
 
 // Initializing particle class
 class Particle {
   constructor(id) {
-      this.location = createVector(random(windowWidth), random(windowHeight)); 
-      this.velocity = createVector(random(-2, 2), random(-2,2));
-      this.id = id;
-      this.maxDistance = 200;
-      this.connections = 0;
+    this.location = createVector(random(windowWidth), random(windowHeight));
+    this.velocity = createVector(random(-2, 2), random(-2, 2));
+    this.id = id;
+    this.maxDistance = 200;
+    this.connections = 0;
   }
 
   move() {
-    if (this.location.dist(myHand.location) < 100){
+    if (myHand && this.location.dist(myHand.location) < 100) {
       let differenceX = this.location.x - myHand.location.x;
       let differenceY = this.location.y - myHand.location.y;
-      this.location.x +=  differenceX*0.3;
-      this.location.x = (windowWidth + this.location.x) % windowWidth ;
-      this.location.y += differenceY*0.3;
+      this.location.x += differenceX * 0.5;
+      this.velocity.x = -this.velocity.x
+      this.velocity.y = -this.velocity.y;
+      this.location.x = (windowWidth + this.location.x) % windowWidth;
+      this.location.y += differenceY * 0.5;
       this.location.y = (windowHeight + this.location.y) % windowHeight;
-    }
-    else {
+    } else {
       this.location.x += this.velocity.x;
-      this.location.x = (windowWidth + this.location.x) % windowWidth ;
+      this.location.x = (windowWidth + this.location.x) % windowWidth;
       this.location.y += this.velocity.y;
       this.location.y = (windowHeight + this.location.y) % windowHeight;
     }
-    
+
   }
 
-  draw(){
+  draw() {
     fill(255);
     noStroke();
     let size = 4 + (this.connections);
-    ellipse(this.location.x,this.location.y, size,size);
-    fill (240,0,0);
+    ellipse(this.location.x, this.location.y, size, size);
+    fill(240, 0, 0);
 
-    if(displayText){
-    let locationText = Math.round(this.location.x) + ", " + Math.round(this.location.y);
-    fill(255);
-    textSize(15);
-    text(locationText, this.location.x, this.location.y)
+    if (displayText) {
+      let locationText = Math.round(this.location.x) + ", " + Math.round(this.location.y);
+      fill(255);
+      textSize(15);
+      text(locationText, this.location.x, this.location.y)
     }
   }
 
-  detectNeighbour(){
+  detectNeighbour() {
     this.connections = 0;
 
-    for (let j = this.id + 1 ; j < particles.length; j++){
-      if (this.location.dist(particles[j].location) < this.maxDistance){
+    for (let j = this.id + 1; j < particles.length; j++) {
+      if (this.location.dist(particles[j].location) < this.maxDistance) {
         this.connections++;
         this.drawLine(this.location, particles[j].location);
       }
@@ -64,10 +76,10 @@ class Particle {
   }
 
 
-  drawLine(startPoint, endPoint){
+  drawLine(startPoint, endPoint) {
     let dist = startPoint.dist(endPoint);
     let alpha = map(dist, 0, this.maxDistance, 1.0, 0.0);
-    let c = color('rgba(0, 255, 255,' + alpha +  ')')
+    let c = color('rgba(0, 255, 255,' + alpha + ')')
     stroke(c);
     strokeWeight(1);
     line(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
@@ -76,51 +88,66 @@ class Particle {
 
 }
 
-function setup() {
-  startVideo();
-  createCanvas(windowWidth, windowHeight);
-  myParticle = new Particle();
-  console.log(myParticle.velocity);
-  for (let i = 0; i < numOfParticles; i++){
-    particles.push(new Particle(i));
-  }
-  myHand = new handParticle();
-}
 
-function draw() {
-  background(20);
-  for (let i = 0; i < numOfParticles; i++){
-    particles[i].detectNeighbour();
-    //particles[i].detectHand();
-    particles[i].move();
-    particles[i].draw();
-  }
-  myHand.draw();
-}
 
 class handParticle {
   constructor() {
-    this.location = createVector(windowWidth/2, windowHeight/2);
+    this.location = createVector(windowWidth / 2, windowHeight / 2);
     this.lerpStep = 0.06;
     this.lerpCounter;
     this.locationGoal;
   }
 
-  updateLocation(vector){
+  updateLocation(vector) {
     this.lerpCounter = 0;
     let goalX = map(vector.x, 0, video.videoWidth, 0, windowWidth, true);
-    
+
     let goalY = map(vector.y, 0, video.videoHeight, 0, windowHeight, true);
-    this.locationGoal = createVector(goalX,goalY);
+    this.locationGoal = createVector(goalX, goalY);
   }
 
-  draw(){
+  draw() {
     this.lerpCounter += this.lerpStep;
     this.location = p5.Vector.lerp(this.location, this.locationGoal, this.lerpCounter);
-    let c = color('rgba(0, 255, 255,' + 0.4 +  ')')
-    fill(c);
+    
+    if(videoStarted){
+        let c = color('rgba(0, 255, 255,' + 0.4 + ')');
+        fill(c);
+    }
+    else {
+      fill(0, 255, 255,0.1);
+    }
     ellipse(this.location.x, this.location.y, 100, 100)
   }
+}
+
+
+
+function setup() {
+  myHand = new handParticle();
+  createCanvas(windowWidth, windowHeight);
+  myParticle = new Particle();
+  console.log(myParticle.velocity);
+  for (let i = 0; i < numOfParticles; i++) {
+    particles.push(new Particle(i));
+  }
+
+}
+
+//################################## DRAW ALL THAT SHIT
+
+function draw() {
+  background(20);
+  if(isLoaded){
+    for (let i = 0; i < numOfParticles; i++) {
+      particles[i].detectNeighbour();
+      //particles[i].detectHand();
+      particles[i].move();
+      particles[i].draw();
+    }
+    myHand.draw();
+  }
+  
 }
 
 //######################################HAND TRACK JS
@@ -132,38 +159,45 @@ const modelParams = {
   scoreThreshold: 0.6, // confidence threshold for predictions.
 }
 
-const video = document.getElementById('myvideo');  
+const video = document.getElementById('myvideo');
+
+//if (videoStarted) {
+  handTrack.load(modelParams)
+  .then(thisModel => {
+    model = thisModel;
+    isLoaded = true;
+    trackButton.innerHTML = "Start <BR> the camera"
+    console.log("LOADED MFK")
+    //Stop spinner here;
+    //setInterval(runDetection, 500);
+    //runDetection();
+  });
+//}
 
 //start video
 function startVideo() {
   handTrack.startVideo(video).then(function (status) {
-      console.log("video started", status);
-      if (status) {
-          //isVideo = true
-          runDetection()
-      } else {
-         console.log( "Please enable video")
-      }
+    console.log("video started", status);
+    if (status) {
+      //isVideo = true
+      trackButton.style.opacity = "0";
+      runDetection()
+    } else {
+      console.log("Please enable video")
+    }
   });
 }
-
-
-handTrack.load(modelParams).then(thisModel => { 
- model = thisModel;
- //setInterval(runDetection, 500);
- runDetection();
-});
 
 function runDetection() {
   model.detect(video).then(predictions => {
     model.renderPredictions(predictions, canvas, context, video);
 
-    if (predictions[0]){
+    if (predictions[0]) {
       let handX = predictions[0].bbox[0] + (predictions[0].bbox[2] / 2);
       let handY = predictions[0].bbox[1] + (predictions[0].bbox[3] / 2);
       let newHandLocation = createVector(handX, handY);
       myHand.updateLocation(newHandLocation);
-     
+
     }
     runDetection();
   });

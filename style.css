@@ -1,3 +1,11 @@
+body {
+    padding: 0; 
+    margin: 0;
+    font-family: 'Ruda', sans-serif;
+    overflow-y:hidden;
+    height:100%;
+} 
+
 .canvasbox {
     z-index: 2;
     position: absolute;
@@ -15,14 +23,73 @@ video  {
     filter:opacity(0%);
 }
 
+button:focus {outline:0;}
+
 button {
-    z-index: 3;
+    font-family: 'Ruda', sans-serif;
+    font-size: 10pt;
     position: fixed;
-    bottom: 5px;
-    right: 5px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0,0);
+    color: rgba(255, 255, 255,1);
+    bottom:46%;
+    left: 46%;
+    border: solid 1px rgba(0, 255, 255,0.1);
+    border-radius: 12px;
+    line-height: 1.4rem;
+    z-index: 3;
+    transition: all 0.5s;
+    opacity: 0.9;
 }
 
-html,body {
-    overflow-y:hidden;
-    height:100%;
+button:hover {
+    color: rgba(0, 255, 255,1);
+    border: solid 1px rgba(0, 255, 255,0.6);
 }
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    margin-left: -125px; /* Divide value of min-width by 2 */
+     /* Black background color */
+    color: rgb(116,194,134); /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 12px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 1; /* Add a z-index if needed */
+    left: 54%; /* Center the snackbar */
+    opacity: 0.8;
+    bottom: 7%; /* 30px from the bottom */
+  }
+  
+  /* Show the snackbar when clicking on a button (class added with JavaScript) */
+  #snackbar.show {
+    visibility: visible; /* Show the snackbar */
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar. 
+    However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+  
+  /* Animations to fade the snackbar in and out */
+  @-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 7%; opacity: 1;}
+  }
+  
+  @keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 7%; opacity: 1;}
+  }
+  
+  @-webkit-keyframes fadeout {
+    from {bottom: 7%; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+  }
+  
+  @keyframes fadeout {
+    from {bottom: 7%; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+  }
